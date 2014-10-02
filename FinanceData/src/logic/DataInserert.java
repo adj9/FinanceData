@@ -95,7 +95,7 @@ public class DataInserert extends Setup {
         try {
             // newObj.put(NAME_KEY, name.getText());
             newObj.put(QUOTATION_KEY, quotation.getText());
-            newObj.put(MINIMUN_KEY, minimum.getText());
+            newObj.put(MAXIMUM_KEY, minimum.getText());
             newObj.put(MAXIMUM_KEY, maximum.getText());
             newObj.put(VOLUMES_KEY, volumes.getText());
             newObj.put(DATA_KEY, date.toString());
@@ -120,34 +120,45 @@ public class DataInserert extends Setup {
         }
 
         Iterator<JSONObject> iterator = null;
-        if (line == null) { // Se il file è vuoto 
-            JSONObject newData = addDataFirstTime(name.getText(), newObj);
+        if (line == null) {
+//          Caso in cio il nome non esiste nel database                
+            JSONObject newTitle = new JSONObject();                   
+            JSONArray array = new JSONArray();                                        
+            try {
+                newTitle.put(NAME_KEY, name.getText());
+                newObj.put(DATAS_KEY, newObj);
+                newTitle.put(DATAS_KEY, array);
+            } catch (JSONException ex) {
+                Logger.getLogger(DataInserert.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
 //          Aggiunta del nuovo titolo finanziario nel Set
-            objFinanceData.add(newData);                                                    
-        } else {            
-//          Caso in cui il nome del  titolo è già presente nel database
-//          Dichiarazione e inizializzazone delle risorse necessarie        
+            objFinanceData.add(newObj);                                                    
+        } else {
+            
+//          Caso in cui si è già salvato delle informazioni nel database
+            //      Dichiarazione e inizializzazone delle risorse necessarie        
             iterator = objFinanceData.iterator();
             String titleName = null;
             int index = 0;
-            // JSONObject objIndex = null;
+            JSONObject objIndex = null;
 
-            /*Iterator<JSONObject> prevIterator = null;
-//          Ciclio per verificare se il nome del titolo è già stato inserito nel database
+            Iterator<JSONObject> prevIterator = null;
+        //      Ciclio per verificare se il nome del titolo è già stato inserito nel database
             while (iterator.hasNext()) {       
                 objIndex = iterator.next();
                 ++index;            
-            }*/
+            }
 
-//          Aggiunta del nuovo dato
-            for (JSONObject objIndex : objFinanceData) {                
-//          Prendo il nome del titolo finanziario             
-                try {
-                    titleName = objIndex.getString(NAME_KEY);
-                } catch (JSONException ex) {
-                    Logger.getLogger(DataInserert.class.getName()).log(Level.SEVERE, null, ex);
-                }                
+        //              Prendo il nome del titolo finanziario             
+            try {
+                titleName = objIndex.getString(NAME_KEY);
+            } catch (JSONException ex) {
+                Logger.getLogger(DataInserert.class.getName()).log(Level.SEVERE, null, ex);
+            }
+//              Aggiunta del nuovo dato   
+            for (int i = 0; i < objFinanceData.size(); ++i) {                                
+                
 //              Caso in cui il nome esista già nel database
                 if (name.getText() == titleName) {                    
 
@@ -156,16 +167,23 @@ public class DataInserert extends Setup {
                     } catch (JSONException ex) {
                         Logger.getLogger(DataInserert.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } else {                                        
-//                  Caso in cio il nome non esiste nel database                
-                    JSONObject newData = addDataFirstTime(name.getText(), newObj);
+                } else {                    
+//                      Caso in cio il nome non esiste nel database                
+                    JSONObject newTitle = new JSONObject();                   
+                    JSONArray array = new JSONArray();                                        
+                    try {
+                        newTitle.put(NAME_KEY, name.getText());
+                        newObj.put(DATAS_KEY, newObj);
+                        newTitle.put(DATAS_KEY, array);
+                    } catch (JSONException ex) {
+                        Logger.getLogger(DataInserert.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-//                  Aggiunta del nuovo titolo finanziario nel Set
-                    objFinanceData.add(newData);                                    
+//                      Aggiunta del nuovo titolo finanziario nel Set
+                    objFinanceData.add(newObj);                                    
                 }                
-            }   // Fine ciclo for-eac
-        }   // File eslse per l'aggiunto di un dato con il databese già pieno
-        
+            }
+        }                
 //      Scrittura dei dati sul file          
         FileWriter write = null;                        
         try {
@@ -185,19 +203,8 @@ public class DataInserert extends Setup {
         }        
     }    
 
-    private JSONObject addDataFirstTime(String financeTtleName, JSONObject dataObj) {        
-//      Caso in cio il nome non esiste nel database                
-        JSONObject newTitle = new JSONObject();                   
-        JSONArray array = new JSONArray();                                        
-        try {
-            newTitle.put(NAME_KEY, financeTtleName);                
-            array.put(dataObj);
-            newTitle.put(DATAS_KEY, array);
-        } catch (JSONException ex) {
-            Logger.getLogger(DataInserert.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return newTitle;
+    private void addDataFirstTime(Strnig financeTtleName, JSONArray obj) {
+        
     }
     
     private void writeFile() {
